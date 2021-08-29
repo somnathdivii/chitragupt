@@ -11,8 +11,6 @@ var bcrypt = require("bcryptjs");
 
 exports.signup = async (req, res) => {
 
-
-  // const salt = await genSaltSync(10);
   const password = await bcrypt.hashSync(req.body.password, 8);
 
   const user = new User({
