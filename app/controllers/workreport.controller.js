@@ -34,8 +34,8 @@ exports.create = (req, res) => {
 
 // Retrieve all workreport from the database.
 exports.findAll = (req, res) => {
-  const title = req.query.title;
-  var condition = title ? { title: { $regex: new RegExp(title), $options: "i" } } : {};
+  const xpname = req.query.xpname;
+  var condition = xpname ? { xpname: { $regex: new RegExp(xpname), $options: "i" } } : {};
 
   Workreport.find(condition)
     .then(data => {
