@@ -1,36 +1,25 @@
 const express = require("express");
 const cors = require("cors");
+const ejs = require('ejs');
+var path = require('path');
 const session = require('express-session');
 const dbConfig = require("./app/config/db.config");
-
+const MongoStore = require('connect-mongo')(session);
+const mongoose = require('mongoose');
 const app = express();
+
+
+
+const db = require("./app/models");
+const Role = db.role;
 
 var corsOptions = {
   origin: "http://localhost:8081"
 };
 
-app.use(cors(corsOptions));
 
-// // parse requests of content-type - application/json
-// app.use(bodyParser.json());
+const dbs = db.mongoose.connection;
 
-// // parse requests of content-type - application/x-www-form-urlencoded
-// app.use(bodyParser.urlencoded({ extended: true }));
-
-app.use(session({
-  secret: 'work hard',
-  resave: true,
-  saveUninitialized: false
-}));
-
-
-app.use(express.json());
-app.use(express.urlencoded({
-  extended: true
-}));
-
-const db = require("./app/models");
-const Role = db.role;
 
 db.mongoose
   .connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
@@ -45,16 +34,62 @@ db.mongoose
     console.error("Connection error", err);
     process.exit();
   });
+app.use(session({
+  secret: 'work hard',
+  resave: true,
+  saveUninitialized: false,
+  store: new MongoStore({
+    mongooseConnection: dbs
+  })
+}));
+
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use(express.urlencoded({
+  extended: true
+}));
 
 
-// simple route
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to Chitragupt." });
-});
 
-// routes
+
+app.use(express.static(path.join(__dirname, 'app/public/assets')));
+// app.use(express.static(path.join(__dirname, 'app/public/views')));
+app.set('views', path.join(__dirname, 'app/public/views'));
+
+app.set('view engine', 'ejs');
+
+
+
+
+
+// WEB routes
+require('./app/routes/index')(app);
+require('./app/routes/worker')(app);
+require('./app/routes/admin')(app);
+
+
+// API routes
 require("./app/routes/auth.routes")(app);
 require("./app/routes/user.routes")(app);
+
+
+// catch 404 and forward to error handler
+app.use(function (req, res, next) {
+  var err = new Error('File Not Found');
+  err.status = 404;
+  next(err);
+});
+
+// error handler
+// define as the last app.use callback
+app.use(function (err, req, res, next) {
+  res.status(err.status || 500);
+  res.send(err.message);
+});
+
+
+
+
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
