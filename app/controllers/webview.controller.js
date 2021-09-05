@@ -116,8 +116,6 @@ exports.signupweb = async (req, res) => {
 
 exports.signinweb = async (req, res) => {
 
-  // console.log(req.body);
-
   User.findOne({
     username: req.body.username
   }).populate("roles", "-__v")
@@ -162,11 +160,14 @@ exports.signinweb = async (req, res) => {
 };
 
 exports.dashboard = async (req, res) => {
+  console.log(req.session.access);
   User.findOne({ _id: req.session.userId }, function (err, data) {
+    console.log(req.session.access);
+
     if (!data) {
       res.redirect('/');
     } else {
-      console.log("found");
+      
       if (req.session.access === 'user') {
         pageTitle = 'Worker Home';
         return res.render('./worker/data.ejs', { "name": data.username, "email": data.email, 'title': pageTitle });

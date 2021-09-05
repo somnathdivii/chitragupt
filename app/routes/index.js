@@ -7,7 +7,7 @@ module.exports = function (app) {
 
 
 	app.all('/', async (req, res, next) => {
-		if (req.session.access === "admin") {
+		if (req.session.access === "admin" || req.session.access === "user" ) {
 			console.log("Done Login");
 			return await res.redirect('/dashboard');
 		} else {
