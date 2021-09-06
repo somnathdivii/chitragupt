@@ -7,7 +7,7 @@ module.exports = function (app) {
 
 
 	app.all('/', async (req, res, next) => {
-		if (req.session.access === "admin" || req.session.access === "user" ) {
+		if (req.session.access === "admin" || req.session.access === "user") {
 			console.log("Done Login");
 			return await res.redirect('/dashboard');
 		} else {
@@ -45,7 +45,7 @@ module.exports = function (app) {
 
 
 	// --------
-	
+
 	app.get('/forgetpass', function (req, res, next) {
 		pageTitle = 'Find Password';
 		res.render("forget.ejs", { "title": pageTitle });

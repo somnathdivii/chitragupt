@@ -6,6 +6,7 @@ const session = require('express-session');
 const dbConfig = require("./app/config/db.config");
 const MongoStore = require('connect-mongo')(session);
 const mongoose = require('mongoose');
+const morgan = require('morgan');
 const app = express();
 
 
@@ -50,17 +51,13 @@ app.use(express.urlencoded({
 }));
 
 
-
-
 app.use(express.static(path.join(__dirname, 'app/public/assets')));
 // app.use(express.static(path.join(__dirname, 'app/public/views')));
 app.set('views', path.join(__dirname, 'app/public/views'));
 
 app.set('view engine', 'ejs');
 
-
-
-
+app.use(morgan('combined'));
 
 // WEB routes
 require('./app/routes/index')(app);
