@@ -1,3 +1,4 @@
+const bodyparser = require('body-parser')
 const express = require("express");
 const cors = require("cors");
 const ejs = require('ejs');
@@ -19,7 +20,6 @@ var corsOptions = {
 };
 
 
-const dbs = db.mongoose.connection;
 
 
 db.mongoose
@@ -35,8 +35,11 @@ db.mongoose
     console.error("Connection error", err);
     process.exit();
   });
+
+const dbs = db.mongoose.connection;
+
 app.use(session({
-  secret: 'work hard',
+  secret: 'testsecrat',
   resave: true,
   saveUninitialized: false,
   store: new MongoStore({
@@ -49,6 +52,13 @@ app.use(express.json());
 app.use(express.urlencoded({
   extended: true
 }));
+
+// app.use(
+//   bodyparser.urlencoded({
+//     extended: true,
+//   })
+// );
+
 
 
 app.use(express.static(path.join(__dirname, 'app/public/assets')));

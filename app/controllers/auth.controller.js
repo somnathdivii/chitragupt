@@ -16,7 +16,8 @@ exports.signup = async (req, res) => {
   const user = new User({
     username: req.body.username,
     email: req.body.email,
-    password: password
+    password: password,
+    // date:Date.now()
   });
 
   user.save((err, user) => {
